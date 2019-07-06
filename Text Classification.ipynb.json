@@ -1,0 +1,634 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "_cell_guid": "b1076dfc-b9ad-4769-8c92-a6c4dae69d19",
+    "_uuid": "8f2839f25d086af736a60e9eeb907d3b93b6e0e5"
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Using TensorFlow backend.\n"
+     ]
+    }
+   ],
+   "source": [
+    "from __future__ import print_function\n",
+    "import numpy as np \n",
+    "from numpy import random\n",
+    "import pandas as pd\n",
+    "import matplotlib.pyplot as plt \n",
+    "\n",
+    "import os\n",
+    "from os import makedirs\n",
+    "from os.path import exists, join\n",
+    "\n",
+    "import keras\n",
+    "from keras.callbacks import TensorBoard\n",
+    "from keras.datasets import mnist\n",
+    "from keras.models import Sequential\n",
+    "from keras.layers import Dense, Dropout, Flatten\n",
+    "from keras.layers import Conv2D, MaxPooling2D\n",
+    "from keras import backend as K"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import keras\n",
+    "from keras.models import Sequential\n",
+    "from keras.layers import embeddings,Embedding,LSTM,GRU,Dense,Dropout,Conv1D, MaxPooling1D,Activation,Input, Bidirectional\n",
+    "from keras.preprocessing.text import Tokenizer\n",
+    "from keras.preprocessing.sequence import pad_sequences\n",
+    "from keras.callbacks import EarlyStopping\n",
+    "from keras.utils.np_utils import to_categorical\n",
+    "from keras.models import Model"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "[nltk_data] Downloading package stopwords to\n",
+      "[nltk_data]     /Users/jananisundaresan/nltk_data...\n",
+      "[nltk_data]   Package stopwords is already up-to-date!\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Requirement already satisfied: snowballstemmer in /anaconda3/lib/python3.7/site-packages (1.2.1)\n",
+      "Requirement already satisfied: gensim in /anaconda3/lib/python3.7/site-packages (3.7.3)\n",
+      "Requirement already satisfied: six>=1.5.0 in /anaconda3/lib/python3.7/site-packages (from gensim) (1.12.0)\n",
+      "Requirement already satisfied: smart-open>=1.7.0 in /anaconda3/lib/python3.7/site-packages (from gensim) (1.8.4)\n",
+      "Requirement already satisfied: numpy>=1.11.3 in /anaconda3/lib/python3.7/site-packages (from gensim) (1.16.2)\n",
+      "Requirement already satisfied: scipy>=0.18.1 in /anaconda3/lib/python3.7/site-packages (from gensim) (1.2.1)\n",
+      "Requirement already satisfied: boto3 in /anaconda3/lib/python3.7/site-packages (from smart-open>=1.7.0->gensim) (1.9.168)\n",
+      "Requirement already satisfied: boto>=2.32 in /anaconda3/lib/python3.7/site-packages (from smart-open>=1.7.0->gensim) (2.49.0)\n",
+      "Requirement already satisfied: requests in /anaconda3/lib/python3.7/site-packages (from smart-open>=1.7.0->gensim) (2.21.0)\n",
+      "Requirement already satisfied: s3transfer<0.3.0,>=0.2.0 in /anaconda3/lib/python3.7/site-packages (from boto3->smart-open>=1.7.0->gensim) (0.2.1)\n",
+      "Requirement already satisfied: botocore<1.13.0,>=1.12.168 in /anaconda3/lib/python3.7/site-packages (from boto3->smart-open>=1.7.0->gensim) (1.12.168)\n",
+      "Requirement already satisfied: jmespath<1.0.0,>=0.7.1 in /anaconda3/lib/python3.7/site-packages (from boto3->smart-open>=1.7.0->gensim) (0.9.4)\n",
+      "Requirement already satisfied: chardet<3.1.0,>=3.0.2 in /anaconda3/lib/python3.7/site-packages (from requests->smart-open>=1.7.0->gensim) (3.0.4)\n",
+      "Requirement already satisfied: urllib3<1.25,>=1.21.1 in /anaconda3/lib/python3.7/site-packages (from requests->smart-open>=1.7.0->gensim) (1.24.1)\n",
+      "Requirement already satisfied: idna<2.9,>=2.5 in /anaconda3/lib/python3.7/site-packages (from requests->smart-open>=1.7.0->gensim) (2.8)\n",
+      "Requirement already satisfied: certifi>=2017.4.17 in /anaconda3/lib/python3.7/site-packages (from requests->smart-open>=1.7.0->gensim) (2019.3.9)\n",
+      "Requirement already satisfied: docutils>=0.10 in /anaconda3/lib/python3.7/site-packages (from botocore<1.13.0,>=1.12.168->boto3->smart-open>=1.7.0->gensim) (0.14)\n",
+      "Requirement already satisfied: python-dateutil<3.0.0,>=2.1; python_version >= \"2.7\" in /anaconda3/lib/python3.7/site-packages (from botocore<1.13.0,>=1.12.168->boto3->smart-open>=1.7.0->gensim) (2.8.0)\n"
+     ]
+    }
+   ],
+   "source": [
+    "import nltk\n",
+    "import string\n",
+    "from nltk.tokenize import word_tokenize\n",
+    "from nltk.corpus import stopwords\n",
+    "import re\n",
+    "nltk.download('stopwords')\n",
+    "from nltk.stem.snowball import SnowballStemmer\n",
+    "!pip install snowballstemmer\n",
+    "!pip install gensim"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.manifold import TSNE\n",
+    "from sklearn.model_selection import train_test_split"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "        <script type=\"text/javascript\">\n",
+       "        window.PlotlyConfig = {MathJaxConfig: 'local'};\n",
+       "        if (window.MathJax) {MathJax.Hub.Config({SVG: {font: \"STIX-Web\"}});}\n",
+       "        if (typeof require !== 'undefined') {\n",
+       "        require.undef(\"plotly\");\n",
+       "        requirejs.config({\n",
+       "            paths: {\n",
+       "                'plotly': ['https://cdn.plot.ly/plotly-latest.min']\n",
+       "            }\n",
+       "        });\n",
+       "        require(['plotly'], function(Plotly) {\n",
+       "            window._Plotly = Plotly;\n",
+       "        });\n",
+       "        }\n",
+       "        </script>\n",
+       "        "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "## Plotly\n",
+    "import plotly.offline as py\n",
+    "import plotly.graph_objs as go\n",
+    "py.init_notebook_mode(connected=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 13955 entries, 0 to 13954\n",
+      "Data columns (total 2 columns):\n",
+      "Genre       13955 non-null object\n",
+      "Synopsys    13955 non-null object\n",
+      "dtypes: object(2)\n",
+      "memory usage: 218.1+ KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "#read the data\n",
+    "df=pd.read_csv(\"~/Desktop/Thesis/train_fast.csv\")\n",
+    "df.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df = df.sample(frac=1)\n",
+    "df=df.iloc[:1000,]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def clean_text(text):\n",
+    "    \n",
+    "    ## Remove puncuation\n",
+    "    text = text.translate(string.punctuation)\n",
+    "    \n",
+    "    ## Convert words to lower case and split them\n",
+    "    text = text.lower().split()\n",
+    "    \n",
+    "    ## Remove stop words\n",
+    "    stops = set(stopwords.words(\"english\"))\n",
+    "    text = [w for w in text if not w in stops and len(w) >= 3]\n",
+    "    \n",
+    "    text = \" \".join(text)\n",
+    "    ## Clean the text\n",
+    "    text = re.sub(r\"[^A-Za-z0-9^,!.\\/'+-=]\", \" \", text)\n",
+    "    text = re.sub(r\"what's\", \"what is \", text)\n",
+    "    text = re.sub(r\"\\'s\", \" \", text)\n",
+    "    text = re.sub(r\"\\'ve\", \" have \", text)\n",
+    "    text = re.sub(r\"n't\", \" not \", text)\n",
+    "    text = re.sub(r\"i'm\", \"i am \", text)\n",
+    "    text = re.sub(r\"\\'re\", \" are \", text)\n",
+    "    text = re.sub(r\"\\'d\", \" would \", text)\n",
+    "    text = re.sub(r\"\\'ll\", \" will \", text)\n",
+    "    text = re.sub(r\",\", \" \", text)\n",
+    "    text = re.sub(r\"\\.\", \" \", text)\n",
+    "    text = re.sub(r\"!\", \" ! \", text)\n",
+    "    text = re.sub(r\"\\/\", \" \", text)\n",
+    "    text = re.sub(r\"\\^\", \" ^ \", text)\n",
+    "    text = re.sub(r\"\\+\", \" + \", text)\n",
+    "    text = re.sub(r\"\\-\", \" - \", text)\n",
+    "    text = re.sub(r\"\\=\", \" = \", text)\n",
+    "    text = re.sub(r\"'\", \" \", text)\n",
+    "    text = re.sub(r\"(\\d+)(k)\", r\"\\g<1>000\", text)\n",
+    "    text = re.sub(r\":\", \" : \", text)\n",
+    "    text = re.sub(r\" e g \", \" eg \", text)\n",
+    "    text = re.sub(r\" b g \", \" bg \", text)\n",
+    "    text = re.sub(r\" u s \", \" american \", text)\n",
+    "    text = re.sub(r\"\\0s\", \"0\", text)\n",
+    "    text = re.sub(r\" 9 11 \", \"911\", text)\n",
+    "    text = re.sub(r\"e - mail\", \"email\", text)\n",
+    "    text = re.sub(r\"j k\", \"jk\", text)\n",
+    "    text = re.sub(r\"\\s{2,}\", \" \", text)\n",
+    "    ## Stemming\n",
+    "    text = text.split()\n",
+    "    stemmer = SnowballStemmer('english')\n",
+    "    stemmed_words = [stemmer.stem(word) for word in text]\n",
+    "    text = \" \".join(stemmed_words)\n",
+    "\n",
+    "    return text\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# apply the above function to df['text']\n",
+    "df['Synopsys'] = df['Synopsys'].map(lambda x: clean_text(x))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "16062"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "### Create sequence\n",
+    "\n",
+    "tokenizer_obj = Tokenizer()\n",
+    "tokenizer_obj.fit_on_texts(df['Synopsys'])\n",
+    "vocab=len(tokenizer_obj.word_index)+1\n",
+    "vocab"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Maximum words in a sentence:923\n"
+     ]
+    }
+   ],
+   "source": [
+    "max_length=max([len(t.split()) for t in df['Synopsys']])\n",
+    "print(\"Maximum words in a sentence:\"+ str(max_length))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sequences=tokenizer_obj.texts_to_sequences(df['Synopsys'])\n",
+    "\n",
+    "data=pad_sequences(sequences,maxlen=max_length,padding='post')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(1000, 923)\n",
+      "(1000,)\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "(1000, 923)"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "X=data\n",
+    "y=df['Genre']\n",
+    "print(X.shape)\n",
+    "print(y.shape)\n",
+    "\n",
+    "X.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(923,)"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "X[1].shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Shape of label tensor: (1000, 923)\n"
+     ]
+    }
+   ],
+   "source": [
+    "y = pd.get_dummies(df['Genre'].values)\n",
+    "print('Shape of label tensor:', X.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(900, 923) (900, 10)\n",
+      "(100, 923) (100, 10)\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.model_selection import train_test_split\n",
+    "X_train, X_test, Y_train, Y_test = train_test_split(X,y, test_size = 0.10, random_state = 42)\n",
+    "print(X_train.shape,Y_train.shape)\n",
+    "print(X_test.shape,Y_test.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "with open(os.path.join('logs', 'metadata.tsv'), 'w') as f:\n",
+    "    np.savetxt(f, y)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "tensorboard = TensorBoard(batch_size=256,\n",
+    "                          embeddings_freq=1,\n",
+    "                          embeddings_layer_names=['features'],\n",
+    "                          embeddings_metadata='metadata.tsv',\n",
+    "                          embeddings_data=X)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Loaded 2196017 word vectors.\n"
+     ]
+    }
+   ],
+   "source": [
+    "\n",
+    "embeddings_index = dict()\n",
+    "f = open('Downloads/glove.840B.300d.txt',encoding='utf-8')\n",
+    "for line in f:\n",
+    "    values = line.split(' ')\n",
+    "    word = values[0]\n",
+    "    coefs = np.asarray(values[1:], dtype='float32')\n",
+    "    embeddings_index[word] = coefs\n",
+    "f.close()\n",
+    "print('Loaded %s word vectors.' % len(embeddings_index))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# create a weight matrix for words in training docs\n",
+    "embedding_matrix = np.zeros((vocab, 300))\n",
+    "for word, index in tokenizer_obj.word_index.items():\n",
+    "    if index > vocab - 1:\n",
+    "        break\n",
+    "    else:\n",
+    "        embedding_vector = embeddings_index.get(word)\n",
+    "        if embedding_vector is not None:\n",
+    "            embedding_matrix[index] = embedding_vector"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "_________________________________________________________________\n",
+      "Layer (type)                 Output Shape              Param #   \n",
+      "=================================================================\n",
+      "input_2 (InputLayer)         (None, 923)               0         \n",
+      "_________________________________________________________________\n",
+      "embedding_2 (Embedding)      (None, 923, 300)          4818600   \n",
+      "_________________________________________________________________\n",
+      "bidirectional_2 (Bidirection (None, 300)               541200    \n",
+      "_________________________________________________________________\n",
+      "features (Dense)             (None, 10)                3010      \n",
+      "=================================================================\n",
+      "Total params: 5,362,810\n",
+      "Trainable params: 544,210\n",
+      "Non-trainable params: 4,818,600\n",
+      "_________________________________________________________________\n",
+      "Epoch 1/30\n",
+      "900/900 [==============================] - 50s 55ms/step - loss: 2.2105 - acc: 0.2189\n",
+      "Epoch 2/30\n",
+      "900/900 [==============================] - 47s 52ms/step - loss: 1.8891 - acc: 0.3822\n",
+      "Epoch 3/30\n",
+      "900/900 [==============================] - 46s 52ms/step - loss: 1.7913 - acc: 0.4456\n",
+      "Epoch 4/30\n",
+      "900/900 [==============================] - 46s 51ms/step - loss: 1.4818 - acc: 0.5644\n",
+      "Epoch 5/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 1.3490 - acc: 0.5778\n",
+      "Epoch 6/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 1.2055 - acc: 0.6211\n",
+      "WARNING:tensorflow:From /anaconda3/lib/python3.7/site-packages/tensorflow/python/training/saver.py:966: remove_checkpoint (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.\n",
+      "Instructions for updating:\n",
+      "Use standard file APIs to delete files with this prefix.\n",
+      "Epoch 7/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 1.0670 - acc: 0.6789\n",
+      "Epoch 8/30\n",
+      "900/900 [==============================] - 45s 51ms/step - loss: 1.0024 - acc: 0.6978\n",
+      "Epoch 9/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 1.0222 - acc: 0.7078\n",
+      "Epoch 10/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.7772 - acc: 0.7844\n",
+      "Epoch 11/30\n",
+      "900/900 [==============================] - 48s 53ms/step - loss: 0.8144 - acc: 0.7611\n",
+      "Epoch 12/30\n",
+      "900/900 [==============================] - 46s 51ms/step - loss: 0.7567 - acc: 0.8011\n",
+      "Epoch 13/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.6882 - acc: 0.8167\n",
+      "Epoch 14/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.6921 - acc: 0.8011\n",
+      "Epoch 15/30\n",
+      "900/900 [==============================] - 46s 51ms/step - loss: 0.7846 - acc: 0.7856\n",
+      "Epoch 16/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.5956 - acc: 0.8433\n",
+      "Epoch 17/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.5462 - acc: 0.8511\n",
+      "Epoch 18/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.6173 - acc: 0.8244\n",
+      "Epoch 19/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.8728 - acc: 0.7400\n",
+      "Epoch 20/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.5515 - acc: 0.8556\n",
+      "Epoch 21/30\n",
+      "900/900 [==============================] - 47s 52ms/step - loss: 0.4835 - acc: 0.8711\n",
+      "Epoch 22/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.4110 - acc: 0.8978\n",
+      "Epoch 23/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.4019 - acc: 0.9011\n",
+      "Epoch 24/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.3850 - acc: 0.9011\n",
+      "Epoch 25/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.5053 - acc: 0.8578\n",
+      "Epoch 26/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.4816 - acc: 0.8722\n",
+      "Epoch 27/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.4392 - acc: 0.8800\n",
+      "Epoch 28/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.3117 - acc: 0.9278\n",
+      "Epoch 29/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.2727 - acc: 0.9344\n",
+      "Epoch 30/30\n",
+      "900/900 [==============================] - 45s 50ms/step - loss: 0.3292 - acc: 0.9044\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "<keras.callbacks.History at 0x1c4b02ccf8>"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from keras.layers import embeddings,LSTM,Dense,Dropout,GRU, SpatialDropout1D\n",
+    "import keras.optimizers as optimizers\n",
+    "from keras.regularizers import L1L2\n",
+    "embedding_layer = Embedding((vocab),300,\n",
+    "                            weights=[embedding_matrix],\n",
+    "                            input_length=max_length,\n",
+    "                            trainable=False)\n",
+    "\n",
+    "input_sequence = Input(shape=(max_length,), dtype='int32')\n",
+    "embedded_sequence = embedding_layer(input_sequence)\n",
+    "bidirectional_lstm = Bidirectional(LSTM(150))(embedded_sequence)\n",
+    "preds = Dense(10, activation='softmax',name='features')(bidirectional_lstm)\n",
+    "model = Model(input_sequence, preds)\n",
+    "model.compile(loss='categorical_crossentropy',\n",
+    "              optimizer='rmsprop',\n",
+    "              metrics=['acc'])\n",
+    "\n",
+    "\n",
+    "model.summary()\n",
+    "model.fit(X_train, Y_train, callbacks=[tensorboard],\n",
+    "          epochs=30, batch_size=256)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "100/100 [==============================] - 3s 29ms/step\n",
+      "Test set\n",
+      "  Loss: 1.619\n",
+      "  Accuracy: 0.580\n"
+     ]
+    }
+   ],
+   "source": [
+    "accr = model.evaluate(X_test,Y_test)\n",
+    "print('Test set\\n  Loss: {:0.3f}\\n  Accuracy: {:0.3f}'.format(accr[0],accr[1]))"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 1
+}
