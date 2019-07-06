@@ -1,0 +1,179 @@
+.light{
+    background: white;
+    color: black;
+}
+
+.light input, .light select, .light textarea {
+    color: black;
+}
+
+
+.light strong, .light b {
+    color: #000000;
+}
+
+.light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
+    color: #000000;
+
+}
+
+
+.light header p {
+    color: #000000;
+    position: relative;
+    margin: 0 0 1.5em 0;
+}
+
+.light label {
+    color: #000000;
+    display: block;
+    font-size: 0.9em;
+    font-weight: 300;
+    margin: 0 0 1em 0;
+}
+
+.light input[type="text"],
+	.light input[type="password"],
+	.light input[type="email"],
+	.light select,
+	.light textarea {
+		background: transparent;
+		border-radius: 4px;
+		border: solid 1px rgba(0, 0, 0, 0.3);
+		color: inherit;
+		display: block;
+		outline: 0;
+		padding: 0 1em;
+		text-decoration: none;
+		width: 100%;
+    }
+    
+
+    .light select {
+		background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' preserveAspectRatio='none' viewBox='0 0 40 40'%3E%3Cpath d='M9.4,12.3l10.4,10.4l10.4-10.4c0.2-0.2,0.5-0.4,0.9-0.4c0.3,0,0.6,0.1,0.9,0.4l3.3,3.3c0.2,0.2,0.4,0.5,0.4,0.9 c0,0.4-0.1,0.6-0.4,0.9L20.7,31.9c-0.2,0.2-0.5,0.4-0.9,0.4c-0.3,0-0.6-0.1-0.9-0.4L4.3,17.3c-0.2-0.2-0.4-0.5-0.4-0.9 c0-0.4,0.1-0.6,0.4-0.9l3.3-3.3c0.2-0.2,0.5-0.4,0.9-0.4S9.1,12.1,9.4,12.3z' fill='rgba(0, 0, 0, 0.3)' /%3E%3C/svg%3E");
+		background-size: 1.25rem;
+		background-repeat: no-repeat;
+		background-position: calc(100% - 1rem) center;
+	}
+
+		.light select option { 
+			color: #000000;
+			background: #FFFFFF;
+        }
+        
+        .light input[type="checkbox"] + label,
+		.light input[type="radio"] + label {
+			color: rgba(0, 0, 0, 0.75);
+        }
+        
+        .light input[type="checkbox"] + label:before,
+			.light input[type="radio"] + label:before {
+				border: solid 1px rgba(0, 0, 0, 0.3);
+			}
+
+		.light input[type="checkbox"]:checked + label:before,
+		.light input[type="radio"]:checked + label:before {
+			background: rgba(0, 0, 0, 0.25);
+			color: #ffffff;
+			content: '\f00c';
+		}
+
+
+        ::-webkit-input-placeholder {
+            color: rgba(0, 0, 0, 0.5) !important;
+            opacity: 1.0;
+        }
+    
+        :-moz-placeholder {
+            color: rgba(0, 0, 0, 0.5) !important;
+            opacity: 1.0;
+        }
+    
+        ::-moz-placeholder {
+            color: rgba(0, 0, 0, 0.5) !important;
+            opacity: 1.0;
+        }
+    
+        :-ms-input-placeholder {
+            color: rgba(0, 0, 0, 0.5) !important;
+            opacity: 1.0;
+        }
+
+
+        .light .box {
+            border-radius: 4px;
+            border: solid 1px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2em;
+            padding: 1.5em;
+        }
+    
+
+
+
+        .mdl-button--raised.mdl-button--colored {
+            background: #e44c65;
+            color: #fff;
+        }
+
+        .mdl-textfield--floating-label.has-placeholder .mdl-textfield__label,.mdl-textfield--floating-label.is-dirty .mdl-textfield__label,.mdl-textfield--floating-label.is-focused .mdl-textfield__label {
+            color: #e44c65;
+            font-size: 12px;
+            top: 4px;
+            visibility: visible
+        }
+
+        .mdl-textfield__label:after {
+            background-color: #e44c65;
+            bottom: 20px;
+            content: '';
+            height: 2px;
+            left: 45%;
+            position: absolute;
+            transition-duration: .2s;
+            transition-timing-function: cubic-bezier(.4,0,.2,1);
+            visibility: hidden;
+            width: 10px
+        }
+        
+
+
+
+
+        /*container*/
+        /* Source: https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_collapsible_symbol*/
+
+        .collapsible {
+            background-color: #777;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+          }
+          
+          .active, .collapsible:hover {
+            background-color: #555;
+          }
+          
+          .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+          }
+          
+          .active:after {
+            content: "\2212";
+          }
+          
+          .content {
+            padding: 0 18px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+            background-color: #f1f1f1;
+          }

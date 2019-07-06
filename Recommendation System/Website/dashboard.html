@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<!--
+	Landed by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>Dashboard - Safe Trip</title>
+	<link rel="icon" type="image/ico" href="images/favicon.ico" />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<!-- <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" /> -->
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<link rel="stylesheet" href="assets/css/light.css" />
+	<link rel="stylesheet" href="assets/css/alert.css" />
+	<!-- <link rel="stylesheet" href="assets/css/firebaseui.css" /> -->
+	<noscript>
+		<link rel="stylesheet" href="assets/css/noscript.css" />
+	</noscript>
+
+
+
+</head>
+
+<body class="is-preload">
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<header id="header">
+			<h1 id="logo"><a href="index.html">Safe Trip</a></h1>
+			<nav id="nav">
+				<ul>
+					<li><a href="index.html">Home</a></li>
+					<li><a href="dashboard.html">Dashboard</a></li>
+					<li><a href="#plus">Plus</a></li>
+					<li><a href="#" class="button primary">Sign Out</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<!-- Main -->
+		<div id="main" class="wrapper style1 light">
+			<div class="container">
+
+				<header class="major">
+					<h2>Dashboard</h2>
+				</header>
+
+				<div class="row">
+					<div class="col-3.5">
+						<h3>When are you planing to travel?</h3>
+					</div>
+					<div class="col-4 col-12-xsmall">
+						<div>
+							<select name="monthSelect" id="monthSelect" onchange="monthSelected()">
+								<option value="">Pick a Month...</option>
+								<option value="January">January</option>
+								<option value="February">February</option>
+								<option value="March">March</option>
+								<option value="April">April</option>
+								<option value="May">May</option>
+								<option value="June">June</option>
+								<option value="July">July</option>
+								<option value="August">August</option>
+								<option value="September">September</option>
+								<option value="October">October</option>
+								<option value="November">November</option>
+								<option value="December">December</option>
+							</select>
+
+						</div>
+					</div>
+				</div>
+
+				<br />
+
+				<h3>Disaster predictions for 2020</h3>
+
+				<div id="vizContainer"></div>
+
+				<div id="markDetails"></div>
+
+				<br />
+				<br />
+
+				<div class="isa_info">Note: Click a country in the map to see the alerts</div>
+
+				<div id="vizAlertContainer"></div>
+
+				<br />
+				<br />
+
+				<h3>Disaster historic data</h3>
+
+				<div>
+					<button class="button primary" onclick="showHistory()">Show disaster historic data</button>
+				</div>
+
+				<br />
+
+				<div id="vizContainerHistorical"></div>
+				<br />
+				<br />
+				<br />
+
+				<a name="plus"></a>
+				<h2>Flight delays in USA (Plus feature)</h2>
+				<p>Gain access to useful flight information such as delays, cancellations and diversions by spreading this website through
+					social media. It's free!</p>
+				<script async="async" id="button_5ff8be40-0b45-4b41-9a8d-1a7fd7e88708"
+					src="//www.paywithatweet.com/embeds/5ff8be40-0b45-4b41-9a8d-1a7fd7e88708" charset="utf-8"></script>
+
+				<br />
+				<br />
+				<br />
+
+
+
+				<!-- Footer -->
+				<footer id="footer">
+					<ul class="icons">
+						<li><a href="#footer" class="icon alt fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#footer" class="icon alt fa-facebook"><span class="label">Facebook</span></a></li>
+						<li><a href="#footer" class="icon alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
+						<li><a href="#footer" class="icon alt fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#footer" class="icon alt fa-github"><span class="label">GitHub</span></a></li>
+						<li><a href="#footer" class="icon alt fa-envelope"><span class="label">Email</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; COMP6214. All rights reserved.</li>
+						<li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</footer>
+
+			</div>
+
+			<!-- Scripts -->
+			<script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-app.js"></script>
+			<script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-auth.js"></script>
+			<script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/jquery.dropotron.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			<script src="assets/js/dashboard.js"></script>
+
+			<!-- <script src="assets/js/auth.js"></script> -->
+
+
+
+			<script type="text/javascript">
+
+
+				$(document).ready(function () {
+					var config = {
+						apiKey: "AIzaSyAvVme6YNtgF4F8Mi8VoqI4j3yPb87OHFU",
+						authDomain: "opendata-soton-travel.firebaseapp.com",
+						databaseURL: "https://opendata-soton-travel.firebaseio.com",
+						projectId: "opendata-soton-travel",
+						storageBucket: "opendata-soton-travel.appspot.com",
+						messagingSenderId: "49987776463",
+						appId: "1:49987776463:web:a40d4163e22e9378"
+					};
+					firebase.initializeApp(config);
+					firebase.auth().onAuthStateChanged(function (user) {
+						if (user) {
+							// User is signed in.
+							//console.log("Logged user case");
+
+						} else {
+							//console.log("No user. Redirecting...");
+
+							// No user is signed in.
+						}
+					});
+
+				});
+
+			</script>
+
+</body>
+
+</html>

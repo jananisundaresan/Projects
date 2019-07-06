@@ -1,0 +1,11 @@
+disasters alerts***
+https://reliefweb.int/disasters#content
+
+country codes***
+https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/master/all/all.csv
+
+flights data ***
+https://openflights.org/data.html
+
+alerts usa***
+https://cadatacatalog.state.gov/dataset/travel
